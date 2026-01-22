@@ -17,7 +17,7 @@ import { images } from "@/constants/images";
 import MovieCard from "@/component/MovieCard";
 import SearchBar from "@/component/SearchBar";
 
-const Index = () => {
+export default function Index() {
   const router = useRouter();
 
   const {
@@ -83,6 +83,4 @@ const Index = () => {
       </ScrollView>
     </View>
   );
-};
-
-export default Index;
+}
