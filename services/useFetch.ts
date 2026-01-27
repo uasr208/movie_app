@@ -9,10 +9,13 @@ const useFetch = <T>(fetchFunction: () => Promise<T>, autoFetch = true) => {
     try {
       setLoading(true);
       setError(null);
+
       const result = await fetchFunction();
       setData(result);
     } catch (err) {
-      setError(err instanceof Error ? err : new Error("An error occurred"));
+      setError(
+        err instanceof Error ? err : new Error("An unknown error occurred"),
+      );
     } finally {
       setLoading(false);
     }
@@ -20,8 +23,8 @@ const useFetch = <T>(fetchFunction: () => Promise<T>, autoFetch = true) => {
 
   const reset = () => {
     setData(null);
-    setLoading(false);
     setError(null);
+    setLoading(false);
   };
 
   useEffect(() => {

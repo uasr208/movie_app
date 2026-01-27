@@ -3,6 +3,7 @@ import SearchBar from "@/component/SearchBar";
 import { icons } from "@/constants/icons";
 import { images } from "@/constants/images";
 import { fetchMovies } from "@/services/api";
+import { updateSearchCount } from "@/services/appwrite";
 import useFetch from "@/services/useFetch";
 
 import React, { useEffect, useState } from "react";
@@ -15,14 +16,15 @@ const search = () => {
     data: movies = [],
     loading,
     error,
-    refetch,
+    refetch: loadMovies,
     reset,
   } = useFetch(() => fetchMovies({ query: searchQuery }), false);
 
+  // Debounced search effect
   useEffect(() => {
     const timeoutId = setTimeout(async () => {
       if (searchQuery.trim()) {
-        await refetch();
+        await loadMovies();
       } else {
         reset();
       }
@@ -30,6 +32,15 @@ const search = () => {
 
     return () => clearTimeout(timeoutId);
   }, [searchQuery]);
+
+  // Separate effect to update Appwrite when movies actually load
+  useEffect(() => {
+    if (searchQuery.trim() && movies?.length > 0 && movies?.[0]) {
+      updateSearchCount(searchQuery, movies[0]).catch((error) => {
+        console.log("Error updating search count:", error);
+      });
+    }
+  }, [movies]);
 
   return (
     <View className="flex-1 bg-primary">
